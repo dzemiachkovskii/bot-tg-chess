@@ -5,22 +5,22 @@ from pieces import *
 from game import *
 
 bot = TeleBot(token)
+game = Game()
 
 
 @bot.message_handler(commands=['start'])
 def greet(m):
-    bot.send_message(m.chat.id, "0-6")
+    bot.send_message(m.chat.id, "stop nahui")
 
 
 @bot.message_handler(commands=['game'])
 def greet(m):
     msg_text = "ВАШ ХОД"
-    coordinates = get_coordinates()
-    markup = get_board(coordinates)
+    markup = get_board_markup(game.board)
     bot.send_message(m.chat.id, msg_text, reply_markup=markup)
 
 
-def get_board(coordinates):
+def get_board_markup(coordinates):
     black_tile = False
     btns = []
     for row in range(8):
@@ -37,7 +37,8 @@ def get_board(coordinates):
 
 @bot.callback_query_handler(lambda call: True)
 def btn_handler(c):
-    print(c.data)
+    x, y = c.data.split('-')
+    game.move_from(int(x), int(y))
 
 
 bot.polling(none_stop=True)
